@@ -5,9 +5,9 @@ import connectDB from "./config/db.js";
 import productRoutes from "./routes/productRoutes.js";
 const port = process.env.PORT || 5000;
 
-connectDB();
-
 const app = express();
+
+connectDB();
 
 app.get("/", (req, res) => {
   res.send("API is running...");
