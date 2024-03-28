@@ -1,5 +1,5 @@
 import { apiSlice } from "./apiSlice";
-import { ORDERS_URL } from "../constants";
+import { ORDERS_URL, STRIPE_URL } from "../constants";
 
 export const ordersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -12,14 +12,29 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
     }),
     getOrderDetails: builder.query({
       query: (orderId) => ({
-        query: (orderId) => ({
-          url: `${ORDERS_URL}/${orderId}`,
-        }),
-        keepUnusedDataFor: 5,
+        url: `${ORDERS_URL}/${orderId}`,
       }),
+      keepUnusedDataFor: 5,
+    }),
+    payOrder: builder.query({
+      query: ({ orderId, details }) => ({
+        url: `${ORDERS_URL}/${orderId}/pay`,
+        method: "PUT",
+        body: { ...details },
+      }),
+    }),
+    getStripePublishableKey: builder.query({
+      query: () => ({
+        url: STRIPE_URL,
+      }),
+      keepUnusedDataFor: 5,
     }),
   }),
 });
 
-export const { useCreateOrderMutation, useGetOrderDetailsQuery } =
-  ordersApiSlice;
+export const {
+  useCreateOrderMutation,
+  useGetOrderDetailsQuery,
+  usePayOrderMutation,
+  useGetStripePublishableKeyQuery,
+} = ordersApiSlice;

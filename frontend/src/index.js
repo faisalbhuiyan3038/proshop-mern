@@ -12,6 +12,7 @@ import { Provider } from "react-redux";
 import store from "./store.js";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import "@stripe/stripe-js";
 import HomeScreen from "./screens/HomeScreen";
 import ProductScreen from "./screens/ProductScreen";
 import CartScreen from "./screens/CartScreen.jsx";
@@ -43,6 +44,7 @@ const router = createBrowserRouter(
 );
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
   <React.StrictMode>
     <Provider store={store}>

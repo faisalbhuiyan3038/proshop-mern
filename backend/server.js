@@ -28,6 +28,13 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 
+app.use("/api/config/stripe", (req, res) =>
+  res.send({
+    clientSecret: process.env.STRIPE_SECRET_KEY,
+    publishableKey: process.env.STRIPE_PUBLISH_KEY,
+  })
+);
+
 app.use(notFound);
 app.use(errorHandler);
 
