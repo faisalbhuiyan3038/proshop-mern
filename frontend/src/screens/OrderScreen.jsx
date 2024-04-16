@@ -10,7 +10,12 @@ import {
 } from "react-bootstrap";
 import Message from "./../components/Message";
 import Loader from "./../components/Loader";
-import { useGetOrderDetailsQuery } from "../slices/ordersApiSlice";
+import {
+  useGetOrderDetailsQuery,
+  usePayOrderMutation,
+} from "../slices/ordersApiSlice";
+
+// const [payOrder, {isLoading: loadinPay}] = usePayOrderMutation();
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
@@ -116,7 +121,19 @@ const OrderScreen = () => {
                   <Col>${order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              {/* PAY ORDER PLACEHOLDER */}
+
+              {!order.isPaid && (
+                <ListGroup.Item>
+                  {
+                    <div>
+                      <Button style={{ marginBottom: "10px" }}>
+                        Test Pay Order
+                      </Button>
+                    </div>
+                  }
+                </ListGroup.Item>
+              )}
+
               {/* MARK AS DELIVERED PLACEHOLDER */}
             </ListGroup>
           </Card>
