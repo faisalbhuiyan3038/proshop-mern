@@ -29,6 +29,13 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 5,
     }),
+    makePayment: builder.mutation({
+      query: ({ orderItems }) => ({
+        url: `${STRIPE_URL}`,
+        method: "POST",
+        body: { products: orderItems },
+      }),
+    }),
   }),
 });
 
@@ -37,4 +44,5 @@ export const {
   useGetOrderDetailsQuery,
   usePayOrderMutation,
   useGetStripePublishableKeyQuery,
+  useMakePaymentMutation,
 } = ordersApiSlice;

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Row,
@@ -10,9 +11,12 @@ import {
 } from "react-bootstrap";
 import Message from "./../components/Message";
 import Loader from "./../components/Loader";
+import { loadStripe } from "@stripe/stripe-js";
+import { ORDERS_URL } from "../constants";
 import {
   useGetOrderDetailsQuery,
   usePayOrderMutation,
+  useMakePaymentMutation,
 } from "../slices/ordersApiSlice";
 
 // const [payOrder, {isLoading: loadinPay}] = usePayOrderMutation();
@@ -26,6 +30,65 @@ const OrderScreen = () => {
     isLoading,
     error,
   } = useGetOrderDetailsQuery(orderId);
+
+  const [makePayment, { isLoadingPay, payerror }] = useMakePaymentMutation();
+
+  const handlePayment = async () => {
+    const stripe = await loadStripe(
+      "pk_test_51Ovjk205VooYGXFiUaM8YZon0wOMNbFstGmrE11RLCvW841p1kHba6sBazvi9iNDOIybnGSax1f6wP7SKsJ5WIaD00ITcxnnzi"
+    );
+
+    try {
+      const products = order.orderItems;
+      const response = await makePayment({ orderItems: products });
+      const session = response.data;
+
+      const result = await stripe.redirectToCheckout({ sessionId: session.id });
+
+      if (result.error) {
+        console.error("Error redirecting to checkout:", result.error);
+      }
+    } catch (error) {
+      console.error("Error making payment:", error);
+    }
+  };
+  // const handlePayment = async () => {
+  //   const stripe = await loadStripe(
+  //     "pk_test_51Ovjk205VooYGXFiUaM8YZon0wOMNbFstGmrE11RLCvW841p1kHba6sBazvi9iNDOIybnGSax1f6wP7SKsJ5WIaD00ITcxnnzi"
+  //   );
+
+  //   console.log(order.orderItems);
+
+  //   // const body = {
+  //   //   products: order.orderItems,
+  //   // };
+
+  //   // const headers = {
+  //   //   "Content-Type": "application/json",
+  //   // };
+
+  //   try {
+  //     const products = order.orderItems;
+  //     const response = await makePayment({ orderId, products });
+  //     const session = await response.json();
+
+  //     const result = stripe.redirectToCheckout({ sessionId: session.id });
+
+  //     if (result.error) {
+  //       console.log(result.error);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   // const response = await fetch(
+  //   //   `http://localhost:5000/api/orders/create-checkout-session`,
+  //   //   {
+  //   //     method: "POST",
+  //   //     headers: headers,
+  //   //     body: JSON.stringify(body),
+  //   //   }
+  //   // );
+  // };
 
   return isLoading ? (
     <Loader />
@@ -126,7 +189,10 @@ const OrderScreen = () => {
                 <ListGroup.Item>
                   {
                     <div>
-                      <Button style={{ marginBottom: "10px" }}>
+                      <Button
+                        onClick={handlePayment}
+                        style={{ marginBottom: "10px" }}
+                      >
                         Test Pay Order
                       </Button>
                     </div>
