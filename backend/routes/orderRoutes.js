@@ -1,8 +1,5 @@
 import express from "express";
-import Stripe from "stripe";
-const stripe = new Stripe(
-  "sk_test_51Ovjk205VooYGXFiCohBVLdJRpYrgVCPWCSRDevGMajngZXhqfsltu28ZkzBVbh7FOFX2dHYUklWAAVSrukiRHFE00aD5D2JoT"
-);
+
 const router = express.Router();
 import {
   addOrderItems,
@@ -13,6 +10,11 @@ import {
   getOrders,
 } from "../controllers/orderController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
+import dotenv from "dotenv";
+dotenv.config();
+
+import Stripe from "stripe";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 router.route("/").post(protect, addOrderItems).get(protect, admin, getOrders);
 router.route("/mine").get(protect, getMyOrders);

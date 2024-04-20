@@ -30,37 +30,9 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 
-app.use("api/create-checkout-session", async (req, res) => {
-  const { products } = req.body;
-
-  console.log(products);
-
-  const lineItems = products.map((product) => ({
-    price_data: {
-      currency: "usd",
-      product_data: {
-        name: product.name,
-        image: product.image,
-      },
-      unit_amount: product.price,
-    },
-    quantity: product.quantity,
-  }));
-
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
-    mode: "payment",
-    success_url: "",
-    cancel_url: "",
-  });
-
-  res.json({ id: session.id });
-});
-
-app.use("/api/config/stripe", (req, res) =>
+app.get("/api/config/stripe", (req, res) =>
   res.send({
-    clientSecret: process.env.STRIPE_SECRET_KEY,
-    publishableKey: process.env.STRIPE_PUBLISH_KEY,
+    publishableKey: process.env.STRIPE_PUBLISH_KEY.toString(),
   })
 );
 

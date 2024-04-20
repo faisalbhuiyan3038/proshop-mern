@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Row,
   Col,
@@ -17,6 +18,7 @@ import {
   useGetOrderDetailsQuery,
   usePayOrderMutation,
   useMakePaymentMutation,
+  useGetStripePublishableKeyQuery,
 } from "../slices/ordersApiSlice";
 
 // const [payOrder, {isLoading: loadinPay}] = usePayOrderMutation();
@@ -33,10 +35,24 @@ const OrderScreen = () => {
 
   const [makePayment, { isLoadingPay, payerror }] = useMakePaymentMutation();
 
+  const dispatch = useDispatch();
+
+  // Using the generated hook to fetch the stripe publishable key
+  const {
+    data: stripeData,
+    errors,
+    isLoadings,
+  } = useGetStripePublishableKeyQuery();
+
+  // Accessing the stripe publishable key from the fetched data
+  const stripePublishableKey = stripeData ? stripeData.publishableKey : null;
+
+  useEffect(() => {
+    // Dispatch any additional actions if needed
+  }, [dispatch]);
+
   const handlePayment = async () => {
-    const stripe = await loadStripe(
-      "pk_test_51Ovjk205VooYGXFiUaM8YZon0wOMNbFstGmrE11RLCvW841p1kHba6sBazvi9iNDOIybnGSax1f6wP7SKsJ5WIaD00ITcxnnzi"
-    );
+    const stripe = await loadStripe(stripePublishableKey);
 
     try {
       const products = order.orderItems;
